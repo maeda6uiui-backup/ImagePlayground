@@ -204,6 +204,7 @@ def main(args):
     results_save_dir:str=args.results_save_dir
     logging_steps:int=args.logging_steps
     checkpoint_save_epochs:int=args.checkpoint_save_epochs
+    test_epochs:int=args.test_epochs
 
     logger.info(args)
 
@@ -274,25 +275,26 @@ def main(args):
         logger.info("Mean Loss (Discriminator): Total: {} Fake: {} Real: {}".format(
             mean_losses["dis_loss"],mean_losses["dis_fake_loss"],mean_losses["dis_real_loss"]))
 
-        if epoch%checkpoint_save_epochs:
+        if epoch%checkpoint_save_epochs==0:
             gen_checkpoint_filepath=os.path.join(results_save_dir,"gen_checkpoint_{}.pt".format(epoch))
             dis_checkpoint_filepath=os.path.join(results_save_dir,"dis_checkpoint_{}.pt".format(epoch))
 
             torch.save(gen_model.state_dict(),gen_checkpoint_filepath)
             torch.save(dis_model.state_dict(),dis_checkpoint_filepath)
 
-        mean_losses=test(
-            gen_model,
-            dis_model,
-            test_dataloader,
-            latent_dim,
-            epoch,
-            results_save_dir)
+        if epoch%test_epochs==0:
+            mean_losses=test(
+                gen_model,
+                dis_model,
+                test_dataloader,
+                latent_dim,
+                epoch,
+                results_save_dir)
 
-        logger.info("Finished epoch {} test".format(epoch))
-        logger.info("Mean Loss (Generator): {}".format(mean_losses["gen_loss"]))
-        logger.info("Mean Loss (Discriminator): Total: {} Fake: {} Real: {}".format(
-            mean_losses["dis_loss"],mean_losses["dis_fake_loss"],mean_losses["dis_real_loss"]))
+            logger.info("Finished epoch {} test".format(epoch))
+            logger.info("Mean Loss (Generator): {}".format(mean_losses["gen_loss"]))
+            logger.info("Mean Loss (Discriminator): Total: {} Fake: {} Real: {}".format(
+                mean_losses["dis_loss"],mean_losses["dis_fake_loss"],mean_losses["dis_real_loss"]))
 
 if __name__=="__main__":
     parser=argparse.ArgumentParser()
@@ -307,6 +309,7 @@ if __name__=="__main__":
     parser.add_argument("--results_save_dir",type=str,default="./Result")
     parser.add_argument("--logging_steps",type=int,default=1)
     parser.add_argument("--checkpoint_save_epochs",type=int,default=10)
+    parser.add_argument("--test_epochs",type=int,default=10)
     args=parser.parse_args()
 
     main(args)
