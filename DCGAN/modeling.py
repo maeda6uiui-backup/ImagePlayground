@@ -254,7 +254,9 @@ def main(args):
 
     logger.info("Start training")
 
-    for epoch in range(num_epochs):
+    start_epoch=resume_epoch+1 if resume_epoch is not None else 0
+
+    for epoch in range(start_epoch,num_epochs):
         logger.info("===== Epoch {}/{} =====".format(epoch,num_epochs-1))
 
         mean_losses=train(
