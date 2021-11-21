@@ -85,8 +85,8 @@ def train(
         ones=torch.ones(batch_len,device=device)
         zeros=torch.zeros(batch_len,device=device)
 
-        fake_image=gen_model(latents)
-        pred_fake=dis_model(fake_image)
+        fake_images=gen_model(latents)
+        pred_fake=dis_model(fake_images)
 
         gen_loss=criterion(pred_fake,ones)
 
@@ -98,8 +98,8 @@ def train(
         pred_real=dis_model(real_images)
         dis_real_loss=criterion(pred_real,ones)
 
-        fake_image=gen_model(latents)
-        pred_fake=dis_model(fake_image)
+        fake_images=gen_model(latents)
+        pred_fake=dis_model(fake_images)
         dis_fake_loss=criterion(pred_fake,zeros)
         
         dis_loss=dis_real_loss+dis_fake_loss
