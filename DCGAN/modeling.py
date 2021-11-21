@@ -203,6 +203,7 @@ def main(args):
     resume_epoch:int=args.resume_epoch
     results_save_dir:str=args.results_save_dir
     logging_steps:int=args.logging_steps
+    checkpoint_save_epochs:int=args.checkpoint_save_epochs
 
     logger.info(args)
 
@@ -273,11 +274,12 @@ def main(args):
         logger.info("Mean Loss (Discriminator): Total: {} Fake: {} Real: {}".format(
             mean_losses["dis_loss"],mean_losses["dis_fake_loss"],mean_losses["dis_real_loss"]))
 
-        gen_checkpoint_filepath=os.path.join(results_save_dir,"gen_checkpoint_{}.pt".format(epoch))
-        dis_checkpoint_filepath=os.path.join(results_save_dir,"dis_checkpoint_{}.pt".format(epoch))
+        if epoch%checkpoint_save_epochs:
+            gen_checkpoint_filepath=os.path.join(results_save_dir,"gen_checkpoint_{}.pt".format(epoch))
+            dis_checkpoint_filepath=os.path.join(results_save_dir,"dis_checkpoint_{}.pt".format(epoch))
 
-        torch.save(gen_model.state_dict(),gen_checkpoint_filepath)
-        torch.save(dis_model.state_dict(),dis_checkpoint_filepath)
+            torch.save(gen_model.state_dict(),gen_checkpoint_filepath)
+            torch.save(dis_model.state_dict(),dis_checkpoint_filepath)
 
         mean_losses=test(
             gen_model,
@@ -300,10 +302,11 @@ if __name__=="__main__":
     parser.add_argument("--latent_dim",type=int,default=100)
     parser.add_argument("--gen_learning_rate",type=float,default=0.0002)
     parser.add_argument("--dis_learning_rate",type=float,default=0.0002)
-    parser.add_argument("--num_epochs",type=int,default=100)
+    parser.add_argument("--num_epochs",type=int,default=500)
     parser.add_argument("--resume_epoch",type=int)
     parser.add_argument("--results_save_dir",type=str,default="./Result")
     parser.add_argument("--logging_steps",type=int,default=1)
+    parser.add_argument("--checkpoint_save_epochs",type=int,default=10)
     args=parser.parse_args()
 
     main(args)
