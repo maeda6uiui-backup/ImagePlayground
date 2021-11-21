@@ -1,4 +1,3 @@
-import torch
 import torch.nn as nn
 
 class Generator(nn.Module):
@@ -27,17 +26,7 @@ class Generator(nn.Module):
             nn.ReLU(inplace=True),
 
             #(32,32)->(64,64)
-            nn.ConvTranspose2d(32,16,kernel_size=4,stride=2,padding=1),
-            nn.BatchNorm2d(16),
-            nn.ReLU(inplace=True),
-
-            #(64,64)->(128,128)
-            nn.ConvTranspose2d(16,8,kernel_size=4,stride=2,padding=1),
-            nn.BatchNorm2d(8),
-            nn.ReLU(inplace=True),
-
-            #(128,128)->(256,256)
-            nn.ConvTranspose2d(8,3,kernel_size=4,stride=2,padding=1),
+            nn.ConvTranspose2d(32,3,kernel_size=4,stride=2,padding=1),
             nn.Tanh()
         )
 
@@ -49,18 +38,8 @@ class Discriminator(nn.Module):
         super().__init__()
 
         self.main=nn.Sequential(
-            #(256,256)->(128,128)
-            nn.Conv2d(3,8,kernel_size=4,stride=2,padding=1),
-            nn.LeakyReLU(0.2,inplace=True),
-
-            #(128,128)->(64,64)
-            nn.Conv2d(8,16,kernel_size=4,stride=2,padding=1),
-            nn.BatchNorm2d(16),
-            nn.LeakyReLU(0.2,inplace=True),
-
             #(64,64)->(32,32)
-            nn.Conv2d(16,32,kernel_size=4,stride=2,padding=1),
-            nn.BatchNorm2d(32),
+            nn.Conv2d(3,32,kernel_size=4,stride=2,padding=1),
             nn.LeakyReLU(0.2,inplace=True),
 
             #(32,32)->(16,16)
